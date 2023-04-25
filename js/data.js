@@ -28,6 +28,13 @@ const randomDescriptionCreate = createRandomIdFromRangeGenerator(0, DESCRIPTIONS
 const randomLatCreate = createRandomIdFromRangeGenerator(MAX_LAT, MIN_LAT,getRandomArbitrary);
 const randomLngCreate = createRandomIdFromRangeGenerator(MAX_LNG, MIN_LNG,getRandomArbitrary);
 
+function createAvatar (number) {
+  if(String(number).length > 1) {
+    return `img/avatars/user${number}.png`;
+  }
+  return `img/avatars/user0${number}.png`;
+}
+
 function createAd () {
   const randomTitle = randomTitleCreate();
   const randomDescription = randomDescriptionCreate();
@@ -39,7 +46,7 @@ function createAd () {
   const randomLng = randomLngCreate();
   return {
     author: {
-      avatar:`img/avatars/user0${randomAuthorCreate()}.png`
+      avatar:createAvatar(randomAuthorCreate())
     },
     offer:{
       title: TITLES[randomTitle],
@@ -60,6 +67,6 @@ function createAd () {
     }
   };
 }
-const createAdsArray = () => Array.from({length: 10}, createAd);
+const createAdsArray = () => Array.from({length: 1}, createAd);
 
 export {createAdsArray};
