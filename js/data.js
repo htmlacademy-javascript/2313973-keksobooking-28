@@ -1,52 +1,23 @@
 import {getRandomInteger, getRandomArbitrary,createRandomIdFromRangeGenerator,sortRandomly} from './util.js';
-
-const ADS_COUNT = 10;
-const MAX_ROOMS = 10;
-const MAX_GUESTS = 8;
-const MIN_PRISE = 10000;
-const MAX_PRISE = 150000;
-const MAX_LAT = 35.65000;
-const MIN_LAT = 35.70000;
-const MAX_LNG = 139.70000;
-const MIN_LNG = 139.80000;
-
-const TITLES = ['Уютное гнездышко', 'Комфортное место', 'Удобное жилье', 'Рай для отдыха','Комфортабельные апартаменты','Прекрасный вид','Тихое пристанище',
-  'Красивый дом','Новое жилище','Высший класс'];
-const HOUSING_TYPES = ['palace', 'flat', 'house', 'bungalow','hotel'];
-const HOURS = ['12:00','13:00','14:00'];
-const FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-const DESCRIPTIONS = ['Центр города','Прекрасный вид из окна',
-  'Рядом парк','Все включено','Для молодых семей', 'Недалеко от пляжа', 'Возле площади',
-  'Новый ремонт','Тихие соседи','Удобная парковка'];
-const PHOTOS = ['https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/duonguyen-8LrGtIxxa4w.jpg',
-  'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
-  'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg'];
+import {ADS_COUNT,MAX_ROOMS,MAX_GUESTS, MIN_PRISE,MAX_PRISE,
+  MAX_LAT, MIN_LAT, MAX_LNG, MIN_LNG,TITLES,
+  HOUSING_TYPES,HOURS,FEATURES,DESCRIPTIONS,PHOTOS } from './constants.js';
 
 const randomAuthorCreate = createRandomIdFromRangeGenerator(1, ADS_COUNT,getRandomInteger);
 const randomTitleCreate = createRandomIdFromRangeGenerator(0, TITLES.length - 1,getRandomInteger);
-const randomDescriptionCreate = createRandomIdFromRangeGenerator(0, DESCRIPTIONS.length - 1,getRandomInteger);
-const randomLatCreate = createRandomIdFromRangeGenerator(MAX_LAT, MIN_LAT,getRandomArbitrary);
-const randomLngCreate = createRandomIdFromRangeGenerator(MAX_LNG, MIN_LNG,getRandomArbitrary);
-
-function createAvatar (number) {
-  if(String(number).length > 1) {
-    return `img/avatars/user${number}.png`;
-  }
-  return `img/avatars/user0${number}.png`;
-}
 
 function createAd () {
+  const numberAvatar = String(randomAuthorCreate());
   const randomTitle = randomTitleCreate();
-  const randomDescription = randomDescriptionCreate();
   const randomFeaturesArray = sortRandomly(FEATURES)
     .slice(0,(getRandomInteger(1, FEATURES.length)));
   const randomPhotosArray = sortRandomly(PHOTOS)
     .slice(0,getRandomInteger(1, PHOTOS.length));
-  const randomLat = randomLatCreate();
-  const randomLng = randomLngCreate();
+  const randomLat = getRandomArbitrary(MAX_LAT, MIN_LAT);
+  const randomLng = getRandomArbitrary(MAX_LNG, MIN_LNG);
   return {
     author: {
-      avatar:createAvatar(randomAuthorCreate())
+      avatar:`img/avatars/user${numberAvatar.padStart(2, '0')}.png`
     },
     offer:{
       title: TITLES[randomTitle],
@@ -58,7 +29,7 @@ function createAd () {
       checkin:HOURS[getRandomInteger(0, HOURS.length - 1)],
       checkout:HOURS[getRandomInteger(0, HOURS.length - 1)],
       features: randomFeaturesArray,
-      description: DESCRIPTIONS[randomDescription],
+      description: DESCRIPTIONS[getRandomInteger(0, DESCRIPTIONS.length - 1)],
       photos: randomPhotosArray
     },
     location: {
@@ -67,6 +38,6 @@ function createAd () {
     }
   };
 }
-const createAdsArray = () => Array.from({length: 1}, createAd);
+const createAdsArray = () => Array.from({length: 10}, createAd);
 
 export {createAdsArray};
