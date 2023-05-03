@@ -1,16 +1,9 @@
 import {createAdsArray} from './data.js';
+import {HOUSE_TYPE_CAPTION_MAP} from './constants.js';
 
 const usersAds = createAdsArray();
 const adsCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 const mapCanvas = document.querySelector('#map-canvas');
-
-const houseTypeToCaptionMap = {
-  'flat':'Квартира',
-  'bungalow':'Бунгало',
-  'house': 'Дом',
-  'palace':'Дворец',
-  'hotel':'Отель'
-};
 
 function showFeatures (popupList, features) {
   popupList.forEach((popupListItem) => {
@@ -28,7 +21,7 @@ function renderAdsList () {
     adsCard.querySelector('.popup__title').textContent = offer.title;
     adsCard.querySelector('.popup__text--address').textContent = offer.address;
     adsCard.querySelector('.popup__text--price').textContent = `${offer.price}₽/ночь`;
-    adsCard.querySelector('.popup__type').textContent = houseTypeToCaptionMap[offer.type];
+    adsCard.querySelector('.popup__type').textContent = HOUSE_TYPE_CAPTION_MAP[offer.type];
     adsCard.querySelector('.popup__text--capacity').textContent = `${offer.rooms} комнаты для ${offer.guests} гостей`;
     adsCard.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
     const featuresContainer = adsCard.querySelector('.popup__features');
