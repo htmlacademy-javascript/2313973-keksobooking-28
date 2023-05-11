@@ -1,4 +1,4 @@
-import {HOUSE_TYPE_CAPTION_MAP} from './constants.js';
+import {mapHousingTypeToCaption} from './thumbnails.js';
 
 const TITLE_MAX_LENGTH = 100;
 const TITLE_MIN_LENGTH = 30;
@@ -9,15 +9,14 @@ const ERROR_TEXT_TITLE_MIN_LENGTH = 'Слишком короткое назва�
 const uploadForm = document.querySelector('.ad-form');
 const fieldTitile = uploadForm.querySelector('#title');
 const fieldPrice = uploadForm.querySelector('#price');
-const selectorHousingType = uploadForm.querySelector('#type');
+const selectHousingType = uploadForm.querySelector('#type');
 const amountRooms = uploadForm.querySelector('#room_number');
 const amountGuests = uploadForm.querySelector('#capacity');
-const selectorTimeIn = uploadForm.querySelector('#timein');
-const selectorTimeOut = uploadForm.querySelector('#timeout');
-const submitAdButton = uploadForm.querySelector('.ad-form__submit');
+const selectTimeIn = uploadForm.querySelector('#timein');
+const selectTimeOut = uploadForm.querySelector('#timeout');
 
 
-const minPrice = {
+const mapTypeToMinPrice = {
   'bungalow': 0,
   'flat': 1000,
   'hotel': 3000,
@@ -25,7 +24,7 @@ const minPrice = {
   'palace': 10000
 };
 
-const amountGuestsOption = {
+const mapCountRoomsToAmountGuests = {
   '1': ['1'],
   '2': ['2','1'],
   '3': ['3', '2', '1'],
@@ -33,12 +32,13 @@ const amountGuestsOption = {
 };
 
 function amountGuestsValidate () {
-  return amountGuestsOption[amountRooms.value].includes(amountGuests.value);
+  return mapCountRoomsToAmountGuests[amountRooms.value].includes(amountGuests.value);
 }
 
 const pristine = new Pristine (uploadForm, {
   classTo: 'ad-form__element',
   errorTextParent: 'ad-form__element',
+  errorClass: 'ad-form__element--invalid'
 });
 
 function isTitleLongEnough (string) {
@@ -49,42 +49,41 @@ function isTitleShortEnough (string) {
   return string.length <= TITLE_MAX_LENGTH;
 }
 
-function validateMinPrice (value) {
-  const typeValue = selectorHousingType.value;
-  return value >= minPrice[typeValue];
+function validateMinPrice () {
+  return fieldPrice.value >= mapTypeToMinPrice[selectHousingType.value];
 }
 
-function onMinPriceChange () {
-  fieldPrice.placeholder = minPrice[this.value];
-  pristine.validate(fieldPrice);
+function onHusingTypeChange () {
+  fieldPrice.placeholder = mapTypeToMinPrice[this.value];
 }
 
 function getPriceErrorMessage () {
-  const typeValue = selectorHousingType.value;
-  return `Минимальная цена типа жилья "${HOUSE_TYPE_CAPTION_MAP[typeValue]}"
-  - ${minPrice[typeValue]} за ночь`;
+  const typeValue = selectHousingType.value;
+  return `Минимальная цена типа жилья "${mapHousingTypeToCaption[typeValue]}"
+  - ${mapTypeToMinPrice[typeValue]} за ночь`;
 }
 
-function SelectorsValidate () {
-  pristine.validate(amountRooms);
-  pristine.validate(amountGuests);
+
+function onChangeTimeOut (evt) {
+  const newValue = evt.target.value;
+  selectTimeOut.value = newValue;
 }
 
-selectorHousingType.addEventListener('change', onMinPriceChange);
-amountRooms.addEventListener('change',SelectorsValidate);
-amountGuests.addEventListener('change',SelectorsValidate);
-selectorTimeIn.addEventListener('change',(evt) => {
+function onChangeTimeIn (evt) {
   const newValue = evt.target.value;
-  selectorTimeOut.value = newValue;
-});
-selectorTimeOut.addEventListener('change',(evt) => {
-  const newValue = evt.target.value;
-  selectorTimeIn.value = newValue;
-});
+  selectTimeIn.value = newValue;
+}
 
-submitAdButton.addEventListener('submit', (evt) =>
-  evt.preventDefault(),
-pristine.validate()
+selectHousingType.addEventListener('change', onHusingTypeChange);
+selectHousingType.addEventListener('change', validateMinPrice);
+selectTimeIn.addEventListener('change', onChangeTimeOut);
+selectTimeOut.addEventListener('change', onChangeTimeIn);
+
+
+uploadForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  pristine.validate();
+}
 );
 
 pristine.addValidator(fieldTitile,isTitleLongEnough, ERROR_TEXT_TITLE_MIN_LENGTH);
