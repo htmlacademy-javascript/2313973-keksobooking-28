@@ -1,9 +1,16 @@
 import {createAdsArray} from './data.js';
-import {HOUSE_TYPE_CAPTION_MAP} from './constants.js';
 
 const usersAds = createAdsArray();
 const adsCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 const mapCanvas = document.querySelector('#map-canvas');
+
+const mapHousingTypeToCaption = {
+  'flat':'Квартира',
+  'bungalow':'Бунгало',
+  'house': 'Дом',
+  'palace':'Дворец',
+  'hotel':'Отель'
+};
 
 function showFeatures (popupList, features) {
   popupList.forEach((popupListItem) => {
@@ -21,32 +28,40 @@ function renderAdsList () {
     adsCard.querySelector('.popup__title').textContent = offer.title;
     adsCard.querySelector('.popup__text--address').textContent = offer.address;
     adsCard.querySelector('.popup__text--price').textContent = `${offer.price}₽/ночь`;
-    adsCard.querySelector('.popup__type').textContent = HOUSE_TYPE_CAPTION_MAP[offer.type];
+    adsCard.querySelector('.popup__type').textContent = mapHousingTypeToCaption[offer.type];
     adsCard.querySelector('.popup__text--capacity').textContent = `${offer.rooms} комнаты для ${offer.guests} гостей`;
     adsCard.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
     const featuresContainer = adsCard.querySelector('.popup__features');
     const featureList = featuresContainer.querySelectorAll('.popup__feature');
-    showFeatures(featureList, offer.features);
     if (offer.features.length === 0) {
       featuresContainer.classList.add('hidden');
+    } else {
+      showFeatures(featureList, offer.features);
     }
     const popupDescription = adsCard.querySelector('.popup__description');
-    popupDescription.textContent = offer.description;
     if (popupDescription.textContent === '') {
       popupDescription.classList.add('hidden');
+    } else {
+      popupDescription.textContent = offer.description;
     }
     const photoContainer = adsCard.querySelector('.popup__photos');
     const popupPhotoInit = photoContainer.querySelector('.popup__photo');
-    offer.photos.forEach((photo) => {
-      const popupPhotoClone = popupPhotoInit.cloneNode(true);
-      popupPhotoClone.src = photo;
-      photoContainer.append(popupPhotoClone);
-    });
-    popupPhotoInit.remove();
-    adsCard.querySelector('.popup__avatar').src = author.avatar;
+    if (offer.photos.length === 0) {
+      popupPhotoInit .classList.add('hidden');
+    } else {
+      offer.photos.forEach((photo) => {
+        const popupPhotoClone = popupPhotoInit.cloneNode(true);
+        popupPhotoClone.src = photo;
+        photoContainer.append(popupPhotoClone);
+        popupPhotoInit.remove();
+      });
+    }
+    adsCard.querySelector('.popup__avatar').src = author.avatar.length === 0 ? 'img/avatars/default.png' : author.avatar;
     adsListFragment.appendChild(adsCard);
   });
   mapCanvas.appendChild(adsListFragment);
 }
 
 renderAdsList ();
+
+export {mapHousingTypeToCaption};

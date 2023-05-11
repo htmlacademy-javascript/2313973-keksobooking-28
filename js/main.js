@@ -4,4 +4,4 @@ import '../js/thumbnails.js';
 import {toggleActivityWebPage} from '../js/activate.js';
 import '../js/form.js';
 
-toggleActivityWebPage(false);
+toggleActivityWebPage(true);
