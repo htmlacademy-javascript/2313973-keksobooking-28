@@ -1,13 +1,10 @@
 import {mapHousingTypeToCaption} from './thumbnails.js';
-
-const TITLE_MAX_LENGTH = 100;
-const TITLE_MIN_LENGTH = 30;
-
-const ERROR_TEXT_TITLE_MAX_LENGTH = 'Слишком длинное название(Максимум - 100 символов)';
-const ERROR_TEXT_TITLE_MIN_LENGTH = 'Слишком короткое название(Минимум - 30 символов)';
+import {TITLE_MAX_LENGTH,TITLE_MIN_LENGTH,
+  ERROR_TEXT_TITLE_MAX_LENGTH,ERROR_TEXT_TITLE_MIN_LENGTH,ERROR_TEXT_FIRST_LETTER,
+  mapHousingTypeToMinPrice, mapAmountRoomsToAmountGuests,MAX_PRICE,ERROR_TEXT_MAX_PRICE} from './constants.js' ;
 
 const uploadForm = document.querySelector('.ad-form');
-const fieldTitile = uploadForm.querySelector('#title');
+const fieldTitle = uploadForm.querySelector('#title');
 const fieldPrice = uploadForm.querySelector('#price');
 const selectHousingType = uploadForm.querySelector('#type');
 const amountRooms = uploadForm.querySelector('#room_number');
@@ -16,29 +13,11 @@ const selectTimeIn = uploadForm.querySelector('#timein');
 const selectTimeOut = uploadForm.querySelector('#timeout');
 
 
-const mapTypeToMinPrice = {
-  'bungalow': 0,
-  'flat': 1000,
-  'hotel': 3000,
-  'house': 5000,
-  'palace': 10000
-};
-
-const mapCountRoomsToAmountGuests = {
-  '1': ['1'],
-  '2': ['2','1'],
-  '3': ['3', '2', '1'],
-  '100':['0']
-};
-
-function amountGuestsValidate () {
-  return mapCountRoomsToAmountGuests[amountRooms.value].includes(amountGuests.value);
-}
-
 const pristine = new Pristine (uploadForm, {
   classTo: 'ad-form__element',
   errorTextParent: 'ad-form__element',
-  errorClass: 'ad-form__element--invalid'
+  errorClass: 'ad-form__element--invalid',
+  errorTextClass: 'text-help'
 });
 
 function isTitleLongEnough (string) {
@@ -49,20 +28,38 @@ function isTitleShortEnough (string) {
   return string.length <= TITLE_MAX_LENGTH;
 }
 
-function validateMinPrice () {
-  return fieldPrice.value >= mapTypeToMinPrice[selectHousingType.value];
+function validateTitleFirstLetter (string) {
+  return string.length !== 0 && string[0] === string[0].toUpperCase();
+}
+
+function validateMaxPrice (value) {
+  return value <= MAX_PRICE;
+}
+
+function validateMinPrice (value) {
+  const typeValue = selectHousingType.value;
+  return value >= mapHousingTypeToMinPrice[typeValue];
 }
 
 function onHusingTypeChange () {
-  fieldPrice.placeholder = mapTypeToMinPrice[this.value];
+  fieldPrice.placeholder = mapHousingTypeToMinPrice[this.value];
+  pristine.validate(fieldPrice);
 }
 
 function getPriceErrorMessage () {
   const typeValue = selectHousingType.value;
   return `Минимальная цена типа жилья "${mapHousingTypeToCaption[typeValue]}"
-  - ${mapTypeToMinPrice[typeValue]} за ночь`;
+  - ${mapHousingTypeToMinPrice[typeValue]} за ночь`;
 }
 
+function amountGuestsValidate () {
+  return mapAmountRoomsToAmountGuests[Number(amountRooms.value)].includes(Number(amountGuests.value));
+}
+
+function SelectorsValidate () {
+  pristine.validate(amountRooms);
+  pristine.validate(amountGuests);
+}
 
 function onChangeTimeOut (evt) {
   const newValue = evt.target.value;
@@ -76,17 +73,26 @@ function onChangeTimeIn (evt) {
 
 selectHousingType.addEventListener('change', onHusingTypeChange);
 selectHousingType.addEventListener('change', validateMinPrice);
+amountRooms.addEventListener('change',SelectorsValidate);
+amountGuests.addEventListener('change',SelectorsValidate);
 selectTimeIn.addEventListener('change', onChangeTimeOut);
 selectTimeOut.addEventListener('change', onChangeTimeIn);
 
 
 uploadForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  pristine.validate();
+  const isFormValid = pristine.validate();
+  if (isFormValid) {
+    uploadForm.submit();
+  }
 }
 );
 
-pristine.addValidator(fieldTitile,isTitleLongEnough, ERROR_TEXT_TITLE_MIN_LENGTH);
-pristine.addValidator(fieldTitile,isTitleShortEnough, ERROR_TEXT_TITLE_MAX_LENGTH);
+pristine.addValidator(fieldTitle,validateTitleFirstLetter, ERROR_TEXT_FIRST_LETTER, 1, true);
+pristine.addValidator(fieldTitle,isTitleLongEnough, ERROR_TEXT_TITLE_MIN_LENGTH);
+pristine.addValidator(fieldTitle,isTitleShortEnough, ERROR_TEXT_TITLE_MAX_LENGTH);
+
 pristine.addValidator(fieldPrice,validateMinPrice, getPriceErrorMessage);
+pristine.addValidator(fieldPrice,validateMaxPrice, ERROR_TEXT_MAX_PRICE);
+
 pristine.addValidator(amountGuests,amountGuestsValidate,'Неподходящее количество гостей');
