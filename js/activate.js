@@ -21,6 +21,5 @@ function toggleActivityWebPage (isActivity) {
       filtersElement.setAttribute('disabled',true));
   }
 }
-toggleActivityWebPage(false);
 
 export {toggleActivityWebPage};
