@@ -5,6 +5,8 @@
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="vendor/nouislider/nouislider.css">
   <title>Кексобукинг</title>
 </head>
 <body>
@@ -19,7 +21,7 @@
     <section class="map">
 
       <!-- Блок для вставки карты -->
-      <div class="map__canvas" id="map-canvas"></div>
+      <div class="map__canvas" id="map-canvas"  style='width: 100%; height: 600px;'></div>
 
       <!-- Фильтрация объявлений -->
       <div class="map__filters-container">
@@ -91,7 +93,7 @@
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="address">Адрес (координаты)</label>
-          <input id="address" name="address" type="text" data-pristine-required-message="Поле обязательно для заполнению" required>
+          <input id="address" name="address" type="text" data-pristine-required-message="Поле обязательно для заполнению" readonly required>
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="type">Тип жилья</label>
@@ -228,7 +230,9 @@
       <button type="button" class="error__button">Попробовать снова</button>
     </div>
   </template>
+  <script src="vendor/leaflet/leaflet.js"></script>
   <script src="vendor/pristine/pristine.min.js"></script>
+  <script src ="vendor/nouislider/nouislider.js"></script>
   <script src="./js/main.js" type="module"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@ const amountRooms = uploadForm.querySelector('#room_number');
 const amountGuests = uploadForm.querySelector('#capacity');
 const selectTimeIn = uploadForm.querySelector('#timein');
 const selectTimeOut = uploadForm.querySelector('#timeout');
-
+const priceSlider = document.querySelector('.ad-form__slider');
 
 const pristine = new Pristine (uploadForm, {
   classTo: 'ad-form__element',
@@ -42,8 +42,14 @@ function validateMinPrice (value) {
 }
 
 function onHusingTypeChange () {
-  fieldPrice.placeholder = mapHousingTypeToMinPrice[this.value];
-  pristine.validate(fieldPrice);
+  const newMinPrice = mapHousingTypeToMinPrice[this.value];
+  fieldPrice.placeholder = newMinPrice;
+  if (fieldPrice.value !== '') {
+    pristine.validate(fieldPrice);
+  }
+  priceSlider.noUiSlider.updateOptions ({
+    start:newMinPrice,
+  });
 }
 
 function getPriceErrorMessage () {
@@ -96,3 +102,20 @@ pristine.addValidator(fieldPrice,validateMinPrice, getPriceErrorMessage);
 pristine.addValidator(fieldPrice,validateMaxPrice, ERROR_TEXT_MAX_PRICE);
 
 pristine.addValidator(amountGuests,amountGuestsValidate,'Неподходящее количество гостей');
+
+noUiSlider.create(priceSlider, {
+  range: {
+    min: 0,
+    max: 100000,
+  },
+  start: 1000,
+  step: 1,
+  connect: 'lower',
+});
+
+function onUpdatePriceSlider () {
+  fieldPrice.value = priceSlider.noUiSlider.get().split('.')[0];
+  pristine.validate(fieldPrice);
+}
+
+priceSlider.noUiSlider.on('update', (onUpdatePriceSlider));
