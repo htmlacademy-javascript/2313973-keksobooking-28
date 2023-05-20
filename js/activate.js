@@ -8,8 +8,6 @@ function activiteWebPage () {
   mapFilter.classList.remove('map__filters--disabled');
   interactiveFormElements.forEach((formElement) =>
     formElement.removeAttribute('disabled',));
-  interactiveFiltersElements.forEach((filtersElement) =>
-    filtersElement.removeAttribute('disabled',));
 }
 
 function inactivateWebPage () {
@@ -21,5 +19,10 @@ function inactivateWebPage () {
     filtersElement.setAttribute('disabled',true));
 }
 
+function activateFilters () {
+  interactiveFiltersElements.forEach((filtersElement) =>
+    filtersElement.removeAttribute('disabled',));
+}
+
 inactivateWebPage();
-export {activiteWebPage,inactivateWebPage};
+export {activiteWebPage,inactivateWebPage,activateFilters};

@@ -1,5 +1,6 @@
 import {activiteWebPage} from './activate.js';
-import {usersAds,getAdPopup} from './thumbnails.js';
+import {getAdPopup} from './thumbnails.js';
+import {ads} from './api.js';
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const COPYRIGHT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -37,17 +38,34 @@ const pinIcon = L.icon ({
   popupAnchor: [0, -20]
 });
 
-usersAds.map((ad) =>
+ads.map((ad) =>
   L.marker(ad.location,{icon: pinIcon})
     .bindPopup(getAdPopup(ad))
     .addTo(map)
 );
 
+function closePopup () {
+  map.closePopup();
+}
 
-const fiedAdress = document.querySelector('#address');
-marker.on('drag', (evt) => {
+const fieldAddress = document.querySelector('#address');
+
+function showLatLnginFieldAddress (evt) {
   const newValue = evt.target.getLatLng();
   const fixedLat = newValue.lat.toFixed(5);
   const fixedLng = newValue.lng.toFixed(5);
-  fiedAdress.value = `${fixedLat}, ${fixedLng}`;
-});
+  fieldAddress.value = `${fixedLat}, ${fixedLng}`;
+}
+
+marker.on('drag', showLatLnginFieldAddress);
+
+function resetMarker () {
+  marker.setLatLng(cityCenter);
+}
+
+function resetFieldAddress () {
+  fieldAddress.value = `${cityCenter.lat}, ${cityCenter.lng}`;
+}
+
+export {closePopup,resetMarker,resetFieldAddress};
+
