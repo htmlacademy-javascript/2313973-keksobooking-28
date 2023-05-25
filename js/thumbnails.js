@@ -1,6 +1,4 @@
-import {createAdsArray} from './data.js';
 
-const usersAds = createAdsArray();
 const adsCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 
 const mapHousingTypeToCaption = {
@@ -30,10 +28,10 @@ function getAdPopup ({author, offer}) {
   adsCard.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
   const featuresContainer = adsCard.querySelector('.popup__features');
   const featureList = featuresContainer.querySelectorAll('.popup__feature');
-  if (offer.features.length === 0) {
-    featuresContainer.classList.add('hidden');
-  } else {
+  if ('features' in offer) {
     showFeatures(featureList, offer.features);
+  } else {
+    featuresContainer.classList.add('hidden');
   }
   const popupDescription = adsCard.querySelector('.popup__description');
   if (popupDescription.textContent === '') {
@@ -43,19 +41,19 @@ function getAdPopup ({author, offer}) {
   }
   const photoContainer = adsCard.querySelector('.popup__photos');
   const popupPhotoInit = photoContainer.querySelector('.popup__photo');
-  if (offer.photos.length === 0) {
-    popupPhotoInit .classList.add('hidden');
-  } else {
+  if ('photos' in offer) {
     offer.photos.forEach((photo) => {
       const popupPhotoClone = popupPhotoInit.cloneNode(true);
       popupPhotoClone.src = photo;
       photoContainer.append(popupPhotoClone);
       popupPhotoInit.remove();
     });
+  } else {
+    popupPhotoInit .classList.add('hidden');
   }
   adsCard.querySelector('.popup__avatar').src = author.avatar.length === 0 ? 'img/avatars/default.png' : author.avatar;
   return adsCard;
 }
 
 
-export {mapHousingTypeToCaption,getAdPopup,usersAds};
+export {mapHousingTypeToCaption,getAdPopup};

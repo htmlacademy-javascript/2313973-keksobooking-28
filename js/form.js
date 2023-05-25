@@ -2,6 +2,9 @@ import {mapHousingTypeToCaption} from './thumbnails.js';
 import {TITLE_MAX_LENGTH,TITLE_MIN_LENGTH,
   ERROR_TEXT_TITLE_MAX_LENGTH,ERROR_TEXT_TITLE_MIN_LENGTH,ERROR_TEXT_FIRST_LETTER,
   mapHousingTypeToMinPrice, mapAmountRoomsToAmountGuests,MAX_PRICE,ERROR_TEXT_MAX_PRICE} from './constants.js' ;
+import {sendData} from './fetch.js';
+import {onShowSuccessMessage,onShowErrorMessage} from './messages.js';
+import {closePopup,resetMarker,resetFieldAddress} from './map.js';
 
 const uploadForm = document.querySelector('.ad-form');
 const fieldTitle = uploadForm.querySelector('#title');
@@ -12,6 +15,15 @@ const amountGuests = uploadForm.querySelector('#capacity');
 const selectTimeIn = uploadForm.querySelector('#timein');
 const selectTimeOut = uploadForm.querySelector('#timeout');
 const priceSlider = document.querySelector('.ad-form__slider');
+const uploadSubmitButton = document.querySelector('.ad-form__submit');
+const resetButton = document.querySelector('.ad-form__reset');
+
+function changeButtonSubmit (boolean) {
+  if (boolean) {
+    return uploadSubmitButton.setAttribute('disabled','disabled');
+  }
+  return uploadSubmitButton.removeAttribute('disabled');
+}
 
 const pristine = new Pristine (uploadForm, {
   classTo: 'ad-form__element',
@@ -84,15 +96,30 @@ amountGuests.addEventListener('change',SelectorsValidate);
 selectTimeIn.addEventListener('change', onChangeTimeOut);
 selectTimeOut.addEventListener('change', onChangeTimeIn);
 
-
-uploadForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  const isFormValid = pristine.validate();
-  if (isFormValid) {
-    uploadForm.submit();
-  }
+function onResetAll () {
+  changeButtonSubmit(false);
+  uploadForm.reset();
+  closePopup();
+  resetMarker();
+  resetFieldAddress();
 }
-);
+
+resetButton.addEventListener('click',onResetAll);
+
+uploadForm.addEventListener('submit', async (evt) => {
+  evt.preventDefault();
+  const isValid = pristine.validate();
+  if (isValid) {
+    changeButtonSubmit(true);
+    const formData = new FormData(evt.target);
+    try {
+      await sendData(formData);
+      onShowSuccessMessage();
+    } catch {
+      onShowErrorMessage();
+    }
+  }
+});
 
 pristine.addValidator(fieldTitle,validateTitleFirstLetter, ERROR_TEXT_FIRST_LETTER, 1, true);
 pristine.addValidator(fieldTitle,isTitleLongEnough, ERROR_TEXT_TITLE_MIN_LENGTH);
@@ -119,3 +146,6 @@ function onUpdatePriceSlider () {
 }
 
 priceSlider.noUiSlider.on('update', (onUpdatePriceSlider));
+
+
+export {onResetAll,changeButtonSubmit};
