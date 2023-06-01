@@ -6,5 +6,4 @@ import '../js/map.js';
 import '../js/fetch.js';
 import '../js/api.js';
 import '../js/messages.js';
-import '../js/filter.js';
-import '../js/photo.js';
+

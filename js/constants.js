@@ -6,9 +6,6 @@ const ERROR_TEXT_TITLE_MAX_LENGTH = 'Слишком длинное назван�
 const ERROR_TEXT_TITLE_MIN_LENGTH = 'Слишком короткое название (Не менее 30 символов)';
 const ERROR_TEXT_FIRST_LETTER = 'Сообщение должно начинаться с заглавной буквы';
 const ERROR_TEXT_MAX_PRICE = `Цена должна быть не более ${MAX_PRICE}`;
-const DEBOUNCE_TIMEOUT = 500;
-const FILE_TYPES = ['jpg', 'jpeg', 'png'];
-
 
 const mapHousingTypeToMinPrice = {
   'bungalow': 0,
@@ -18,7 +15,6 @@ const mapHousingTypeToMinPrice = {
   'palace': 10000
 };
 
-
 const mapAmountRoomsToAmountGuests = {
   1: [1],
   2: [1,2],
@@ -26,17 +22,7 @@ const mapAmountRoomsToAmountGuests = {
   100:[0]
 };
 
-export {TITLE_MAX_LENGTH,
-  TITLE_MIN_LENGTH,
-  ERROR_TEXT_TITLE_MAX_LENGTH,
-  ERROR_TEXT_TITLE_MIN_LENGTH,
-  mapHousingTypeToMinPrice,
-  mapAmountRoomsToAmountGuests,
-  ERROR_TEXT_FIRST_LETTER,
-  MAX_PRICE,
-  ERROR_TEXT_MAX_PRICE,
-  ALERT_SHOW_TIME,
-  DEBOUNCE_TIMEOUT,
-  FILE_TYPES};
-
-
+export {TITLE_MAX_LENGTH,TITLE_MIN_LENGTH,
+  ERROR_TEXT_TITLE_MAX_LENGTH,ERROR_TEXT_TITLE_MIN_LENGTH,
+  mapHousingTypeToMinPrice, mapAmountRoomsToAmountGuests,ERROR_TEXT_FIRST_LETTER,
+  MAX_PRICE,ERROR_TEXT_MAX_PRICE,ALERT_SHOW_TIME};

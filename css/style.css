@@ -647,9 +647,6 @@ fieldset {
   border-color: #ff6d51;
   background-color: #ff6d51;
 }
-.ad-form__submit:disabled {
-  pointer-events: none;
-}
 
 .ad-form__submit:disabled {
   pointer-events: none;
