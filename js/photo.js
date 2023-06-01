@@ -9,9 +9,9 @@ inputAvatar.addEventListener('change', () => {
   const file = inputAvatar.files[0];
   const fileName = file.name.toLowerCase();
 
-  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+  const isMatched = FILE_TYPES.some((it) => fileName.endsWith(it));
 
-  if (matches) {
+  if (isMatched) {
     previewAvatar.src = URL.createObjectURL(file);
   }
 });
@@ -20,9 +20,9 @@ inputPhotoAds.addEventListener('change', () => {
   const file = inputPhotoAds.files[0];
   const fileName = file.name.toLowerCase();
 
-  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+  const isMatched = FILE_TYPES.some((it) => fileName.endsWith(it));
 
-  if (matches) {
+  if (isMatched) {
     const newImg = document.createElement('img');
     newImg.src = URL.createObjectURL(file);
     newImg.classList.add('ad-form__photo');
@@ -32,7 +32,7 @@ inputPhotoAds.addEventListener('change', () => {
 
 function resetPhotos () {
   previewAvatar.src = 'img/muffin-grey.svg';
-  if (previewPhotoAds.img !== undefined) {
+  if (previewPhotoAds.firstChild) {
     previewPhotoAds.firstChild.remove();
   }
 }

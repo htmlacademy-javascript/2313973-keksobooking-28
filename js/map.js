@@ -1,4 +1,4 @@
-import {activiteWebPage} from './activate.js';
+import {activateWebPage} from './activate.js';
 import {getAdPopup} from './thumbnails.js';
 import {DEBOUNCE_TIMEOUT} from './constants.js';
 import {debounce} from './util.js';
@@ -25,14 +25,8 @@ const activeFilters = {
 };
 
 const map = L.map('map-canvas').on('load', () => {
-  activiteWebPage();
+  activateWebPage();
 }).setView(cityCenter, ZOOM);
-
-map.createPane(ADS_PIN_PANE);
-
-L.tileLayer(TILE_LAYER, {
-  attribution: COPYRIGHT
-}).addTo(map);
 
 const mainPinIcon = L.icon({
   iconUrl: '/img/main-pin.svg',
@@ -46,7 +40,6 @@ const marker = L.marker(cityCenter, {
   autoPan: true,
   autoPanPadding: L.point([100,100])
 });
-marker.addTo(map);
 
 const pinIcon = L.icon ({
   iconUrl: '/img/pin.svg',
@@ -120,14 +113,12 @@ function resetFilters () {
 
 const fieldAddress = document.querySelector('#address');
 
-function showLatLnginFieldAddress (evt) {
+function showLatLngInFieldAddress (evt) {
   const newValue = evt.target.getLatLng();
   const fixedLat = newValue.lat.toFixed(5);
   const fixedLng = newValue.lng.toFixed(5);
   fieldAddress.value = `${fixedLat}, ${fixedLng}`;
 }
-
-marker.on('drag', showLatLnginFieldAddress);
 
 function resetMarker () {
   marker.setLatLng(cityCenter);
@@ -136,5 +127,15 @@ function resetMarker () {
 function resetFieldAddress () {
   fieldAddress.value = `${cityCenter.lat}, ${cityCenter.lng}`;
 }
+
+map.createPane(ADS_PIN_PANE);
+
+L.tileLayer(TILE_LAYER, {
+  attribution: COPYRIGHT
+}).addTo(map);
+
+marker.addTo(map);
+
+marker.on('drag', showLatLngInFieldAddress);
 
 export {closePopup,resetMarker,resetFieldAddress,initAds,filterAds,resetFilters};
