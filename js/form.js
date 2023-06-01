@@ -65,6 +65,7 @@ function onValidateMinPrice (value) {
   return value >= mapHousingTypeToMinPrice[typeValue];
 }
 
+
 function onHousingTypeChange () {
   const newMinPrice = mapHousingTypeToMinPrice[this.value];
   fieldPrice.placeholder = newMinPrice;
@@ -86,6 +87,7 @@ function amountGuestsValidate () {
   return mapAmountRoomsToAmountGuests[Number(amountRooms.value)].includes(Number(amountGuests.value));
 }
 
+
 function onSelectorsValidate () {
   pristine.validate(amountRooms);
   pristine.validate(amountGuests);
@@ -100,6 +102,7 @@ function onChangeTimeIn (evt) {
   const newValue = evt.target.value;
   selectTimeIn.value = newValue;
 }
+
 
 function onUpdatePriceSlider () {
   fieldPrice.value = priceSlider.noUiSlider.get().split('.')[0];
@@ -120,7 +123,6 @@ function onResetAll () {
   resetFilters();
 }
 
-
 uploadForm.addEventListener('submit', async (evt) => {
   evt.preventDefault();
   const isValid = pristine.validate();
@@ -135,6 +137,7 @@ uploadForm.addEventListener('submit', async (evt) => {
     }
   }
 });
+
 
 selectHousingType.addEventListener('change', onHousingTypeChange);
 selectHousingType.addEventListener('change', onValidateMinPrice);

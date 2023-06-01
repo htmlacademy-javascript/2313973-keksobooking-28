@@ -4,6 +4,7 @@ import {DEBOUNCE_TIMEOUT} from './constants.js';
 import {debounce} from './util.js';
 import {mapFilter} from './activate.js';
 
+
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const COPYRIGHT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const ZOOM = 10;
@@ -47,6 +48,7 @@ const pinIcon = L.icon ({
   iconAnchor: [20,40],
   popupAnchor: [0, -20]
 });
+
 
 let ads = [];
 
@@ -102,6 +104,7 @@ function filterAds (key, value) {
   rerenderAds();
 }
 
+
 function closePopup () {
   map.closePopup();
 }
@@ -113,7 +116,10 @@ function resetFilters () {
 
 const fieldAddress = document.querySelector('#address');
 
-function showLatLngInFieldAddress (evt) {
+
+const fieldAddress = document.querySelector('#address');
+
+function showLatLnginFieldAddress (evt) {
   const newValue = evt.target.getLatLng();
   const fixedLat = newValue.lat.toFixed(5);
   const fixedLng = newValue.lng.toFixed(5);

@@ -1,4 +1,6 @@
+
 const ESCAPE_KEY = 'Escape';
+
 
 function sortRandomly(arr){
   let j, temp;
@@ -10,6 +12,7 @@ function sortRandomly(arr){
   }
   return arr;
 }
+
 
 const isEscapeKey = (evt) => evt.key === ESCAPE_KEY;
 

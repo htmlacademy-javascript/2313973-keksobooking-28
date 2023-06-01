@@ -9,6 +9,7 @@ const ERROR_TEXT_MAX_PRICE = `Цена должна быть не более ${M
 const DEBOUNCE_TIMEOUT = 500;
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
+
 const mapHousingTypeToMinPrice = {
   'bungalow': 0,
   'flat': 1000,
@@ -16,6 +17,7 @@ const mapHousingTypeToMinPrice = {
   'house': 5000,
   'palace': 10000
 };
+
 
 const mapAmountRoomsToAmountGuests = {
   1: [1],
@@ -36,4 +38,5 @@ export {TITLE_MAX_LENGTH,
   ALERT_SHOW_TIME,
   DEBOUNCE_TIMEOUT,
   FILE_TYPES};
+
 

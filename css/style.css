@@ -651,6 +651,10 @@ fieldset {
   pointer-events: none;
 }
 
+.ad-form__submit:disabled {
+  pointer-events: none;
+}
+
 .ad-form__reset {
   margin: 0;
   padding: 0;
