@@ -2,15 +2,14 @@ import {getData} from './fetch.js';
 import {activateFilters} from './activate.js';
 import {showAlert} from './messages.js';
 
-import {initAds} from './map.js';
+let ads;
 
-getData()
-  .then((ads) => {
-    initAds(ads);
-    activateFilters();
-  }
-  ).
-  catch (() => {
-    showAlert('Ошибка загрузки');
-  }
-  );
+try {
+  ads = await getData();
+  activateFilters();
+} catch {
+  showAlert('Не удалось загрузить данные. Попробуйте обновить страницу');
+}
+
+
+export {ads};
