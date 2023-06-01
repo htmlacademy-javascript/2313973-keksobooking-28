@@ -1,3 +1,6 @@
+
+import {showAlert} from './messages.js';
+
 const BASE_URL = 'https://28.javascript.pages.academy/keksobooking';
 const Route = {
   GET_DATA: '/data',
@@ -15,6 +18,9 @@ function load (route, method = Method.GET, body = null) {
         throw new Error();
       }
       return response.json();
+    })
+    .catch(() => {
+      showAlert('Ошибка загрузки');
     });
 }
 

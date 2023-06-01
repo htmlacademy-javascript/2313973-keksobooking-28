@@ -1,4 +1,7 @@
 
+const ESCAPE_KEY = 'Escape';
+
+
 function sortRandomly(arr){
   let j, temp;
   for(let i = arr.length - 1; i > 0; i--){
@@ -10,7 +13,17 @@ function sortRandomly(arr){
   return arr;
 }
 
-const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {isEscapeKey,sortRandomly};
+const isEscapeKey = (evt) => evt.key === ESCAPE_KEY;
+
+function debounce (callback, timeoutDelay) {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+}
+
+export {isEscapeKey,sortRandomly,debounce};
+
 

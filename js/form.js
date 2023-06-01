@@ -4,7 +4,8 @@ import {TITLE_MAX_LENGTH,TITLE_MIN_LENGTH,
   mapHousingTypeToMinPrice, mapAmountRoomsToAmountGuests,MAX_PRICE,ERROR_TEXT_MAX_PRICE} from './constants.js' ;
 import {sendData} from './fetch.js';
 import {onShowSuccessMessage,onShowErrorMessage} from './messages.js';
-import {closePopup,resetMarker,resetFieldAddress} from './map.js';
+import {closePopup,resetMarker,resetFieldAddress,resetFilters} from './map.js';
+import {resetPhotos} from './photo.js';
 
 const uploadForm = document.querySelector('.ad-form');
 const fieldTitle = uploadForm.querySelector('#title');
@@ -18,6 +19,23 @@ const priceSlider = document.querySelector('.ad-form__slider');
 const uploadSubmitButton = document.querySelector('.ad-form__submit');
 const resetButton = document.querySelector('.ad-form__reset');
 
+const pristine = new Pristine (uploadForm, {
+  classTo: 'ad-form__element',
+  errorTextParent: 'ad-form__element',
+  errorClass: 'ad-form__element--invalid',
+  errorTextClass: 'text-help'
+});
+
+noUiSlider.create(priceSlider, {
+  range: {
+    min: 0,
+    max: 100000,
+  },
+  start: 1000,
+  step: 1,
+  connect: 'lower',
+});
+
 function changeButtonSubmit (boolean) {
   if (boolean) {
     return uploadSubmitButton.setAttribute('disabled','disabled');
@@ -25,12 +43,6 @@ function changeButtonSubmit (boolean) {
   return uploadSubmitButton.removeAttribute('disabled');
 }
 
-const pristine = new Pristine (uploadForm, {
-  classTo: 'ad-form__element',
-  errorTextParent: 'ad-form__element',
-  errorClass: 'ad-form__element--invalid',
-  errorTextClass: 'text-help'
-});
 
 function isTitleLongEnough (string) {
   return string.length >= TITLE_MIN_LENGTH;
@@ -44,16 +56,17 @@ function validateTitleFirstLetter (string) {
   return string.length !== 0 && string[0] === string[0].toUpperCase();
 }
 
-function validateMaxPrice (value) {
+function onValidateMaxPrice (value) {
   return value <= MAX_PRICE;
 }
 
-function validateMinPrice (value) {
+function onValidateMinPrice (value) {
   const typeValue = selectHousingType.value;
   return value >= mapHousingTypeToMinPrice[typeValue];
 }
 
-function onHusingTypeChange () {
+
+function onHousingTypeChange () {
   const newMinPrice = mapHousingTypeToMinPrice[this.value];
   fieldPrice.placeholder = newMinPrice;
   if (fieldPrice.value !== '') {
@@ -74,7 +87,8 @@ function amountGuestsValidate () {
   return mapAmountRoomsToAmountGuests[Number(amountRooms.value)].includes(Number(amountGuests.value));
 }
 
-function SelectorsValidate () {
+
+function onSelectorsValidate () {
   pristine.validate(amountRooms);
   pristine.validate(amountGuests);
 }
@@ -89,12 +103,15 @@ function onChangeTimeIn (evt) {
   selectTimeIn.value = newValue;
 }
 
-selectHousingType.addEventListener('change', onHusingTypeChange);
-selectHousingType.addEventListener('change', validateMinPrice);
-amountRooms.addEventListener('change',SelectorsValidate);
-amountGuests.addEventListener('change',SelectorsValidate);
-selectTimeIn.addEventListener('change', onChangeTimeOut);
-selectTimeOut.addEventListener('change', onChangeTimeIn);
+
+function onUpdatePriceSlider () {
+  fieldPrice.value = priceSlider.noUiSlider.get().split('.')[0];
+  pristine.validate(fieldPrice);
+}
+
+function onChangeSlidersHandlePosition (evt) {
+  priceSlider.noUiSlider.set(evt.target.value);
+}
 
 function onResetAll () {
   changeButtonSubmit(false);
@@ -102,9 +119,9 @@ function onResetAll () {
   closePopup();
   resetMarker();
   resetFieldAddress();
+  resetPhotos();
+  resetFilters();
 }
-
-resetButton.addEventListener('click',onResetAll);
 
 uploadForm.addEventListener('submit', async (evt) => {
   evt.preventDefault();
@@ -121,31 +138,22 @@ uploadForm.addEventListener('submit', async (evt) => {
   }
 });
 
+
+selectHousingType.addEventListener('change', onHousingTypeChange);
+selectHousingType.addEventListener('change', onValidateMinPrice);
+amountRooms.addEventListener('change',onSelectorsValidate);
+amountGuests.addEventListener('change',onSelectorsValidate);
+selectTimeIn.addEventListener('change', onChangeTimeOut);
+selectTimeOut.addEventListener('change', onChangeTimeIn);
+fieldPrice.addEventListener('change', onChangeSlidersHandlePosition);
 pristine.addValidator(fieldTitle,validateTitleFirstLetter, ERROR_TEXT_FIRST_LETTER, 1, true);
 pristine.addValidator(fieldTitle,isTitleLongEnough, ERROR_TEXT_TITLE_MIN_LENGTH);
 pristine.addValidator(fieldTitle,isTitleShortEnough, ERROR_TEXT_TITLE_MAX_LENGTH);
-
-pristine.addValidator(fieldPrice,validateMinPrice, getPriceErrorMessage);
-pristine.addValidator(fieldPrice,validateMaxPrice, ERROR_TEXT_MAX_PRICE);
-
+pristine.addValidator(fieldPrice,onValidateMinPrice, getPriceErrorMessage);
+pristine.addValidator(fieldPrice,onValidateMaxPrice, ERROR_TEXT_MAX_PRICE);
 pristine.addValidator(amountGuests,amountGuestsValidate,'Неподходящее количество гостей');
-
-noUiSlider.create(priceSlider, {
-  range: {
-    min: 0,
-    max: 100000,
-  },
-  start: 1000,
-  step: 1,
-  connect: 'lower',
-});
-
-function onUpdatePriceSlider () {
-  fieldPrice.value = priceSlider.noUiSlider.get().split('.')[0];
-  pristine.validate(fieldPrice);
-}
-
 priceSlider.noUiSlider.on('update', (onUpdatePriceSlider));
+resetButton.addEventListener('click',onResetAll);
 
 
 export {onResetAll,changeButtonSubmit};

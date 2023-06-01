@@ -3,7 +3,8 @@ const interactiveFormElements = adForm.querySelectorAll('fieldset');
 const mapFilter = document.querySelector('.map__filters');
 const interactiveFiltersElements = mapFilter.querySelectorAll('select ,fieldset');
 
-function activiteWebPage () {
+
+function activateWebPage () {
   adForm.classList.remove('ad-form--disabled');
   mapFilter.classList.remove('map__filters--disabled');
   interactiveFormElements.forEach((formElement) =>
@@ -25,4 +26,5 @@ function activateFilters () {
 }
 
 inactivateWebPage();
-export {activiteWebPage,inactivateWebPage,activateFilters};
+
+export {activateWebPage,inactivateWebPage,activateFilters,mapFilter};
