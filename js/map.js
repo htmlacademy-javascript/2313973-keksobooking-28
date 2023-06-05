@@ -1,9 +1,6 @@
-import {activateWebPage} from './activate.js';
+import {activiteWebPage} from './activate.js';
 import {getAdPopup} from './thumbnails.js';
-import {DEBOUNCE_TIMEOUT} from './constants.js';
-import {debounce} from './util.js';
-import {mapFilter} from './activate.js';
-
+import {ads} from './api.js';
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const COPYRIGHT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -12,22 +9,13 @@ const cityCenter = {
   lat: 35.68948,
   lng: 139.69170,
 };
-
-const ADS_PIN_PANE = 'ads-pins';
-const COUNT_AD_ON_MAP = 10;
-const ANY_FILTER_VALUE = 'any';
-
-const activeFilters = {
-  features: [],
-  type: ANY_FILTER_VALUE,
-  price: [],
-  rooms: ANY_FILTER_VALUE,
-  guests: ANY_FILTER_VALUE
-};
-
 const map = L.map('map-canvas').on('load', () => {
-  activateWebPage();
+  activiteWebPage();
 }).setView(cityCenter, ZOOM);
+
+L.tileLayer(TILE_LAYER, {
+  attribution: COPYRIGHT
+}).addTo(map);
 
 const mainPinIcon = L.icon({
   iconUrl: '/img/main-pin.svg',
@@ -41,6 +29,7 @@ const marker = L.marker(cityCenter, {
   autoPan: true,
   autoPanPadding: L.point([100,100])
 });
+marker.addTo(map);
 
 const pinIcon = L.icon ({
   iconUrl: '/img/pin.svg',
@@ -49,73 +38,15 @@ const pinIcon = L.icon ({
   popupAnchor: [0, -20]
 });
 
-
-let ads = [];
-
-function renderAdsPins (items) {
-  items.map((item) =>
-    L.marker(item.location,{icon: pinIcon, pane: ADS_PIN_PANE})
-      .bindPopup(getAdPopup(item))
-      .addTo(map)
-  );
-}
-
-function initAds (newAds) {
-  ads = newAds;
-  renderAdsPins(ads.slice(0, COUNT_AD_ON_MAP));
-}
-
-const rerenderAds = debounce(() => {
-  closePopup();
-  const oldPins = map.getPane(ADS_PIN_PANE).querySelectorAll('.leaflet-marker-icon');
-  oldPins.forEach((pin) => pin.remove());
-  renderAdsPins(ads.filter((ad)=> Object.entries(activeFilters).every(([key,value]) => {
-    if (key === 'price') {
-      if (value.length === 0) {
-        return true;
-      }
-      return ad.offer.price >= value[0] && ad.offer.price < value[1];
-    }
-    if (key === 'features') {
-      if (value.length === 0) {
-        return true;
-      }
-      if (ad.offer.features === undefined) {
-        return false;
-      }
-      return value.every((feature) => ad.offer.features.includes(feature));
-    }
-    if (key === 'rooms' || key === 'guests') {
-      if (value === ANY_FILTER_VALUE) {
-        return true;
-      }
-      return ad.offer[key] === Number(value);
-    }
-    if (value === ANY_FILTER_VALUE) {
-      return true;
-    }
-    return ad.offer[key] === value;
-  }
-  )).slice(0, COUNT_AD_ON_MAP));
-},DEBOUNCE_TIMEOUT);
-
-function filterAds (key, value) {
-  activeFilters[key] = value;
-  rerenderAds();
-}
-
+ads.map((ad) =>
+  L.marker(ad.location,{icon: pinIcon})
+    .bindPopup(getAdPopup(ad))
+    .addTo(map)
+);
 
 function closePopup () {
   map.closePopup();
 }
-
-function resetFilters () {
-  mapFilter.reset();
-  initAds(ads);
-}
-
-const fieldAddress = document.querySelector('#address');
-
 
 const fieldAddress = document.querySelector('#address');
 
@@ -126,6 +57,8 @@ function showLatLnginFieldAddress (evt) {
   fieldAddress.value = `${fixedLat}, ${fixedLng}`;
 }
 
+marker.on('drag', showLatLnginFieldAddress);
+
 function resetMarker () {
   marker.setLatLng(cityCenter);
 }
@@ -134,14 +67,5 @@ function resetFieldAddress () {
   fieldAddress.value = `${cityCenter.lat}, ${cityCenter.lng}`;
 }
 
-map.createPane(ADS_PIN_PANE);
+export {closePopup,resetMarker,resetFieldAddress};
 
-L.tileLayer(TILE_LAYER, {
-  attribution: COPYRIGHT
-}).addTo(map);
-
-marker.addTo(map);
-
-marker.on('drag', showLatLngInFieldAddress);
-
-export {closePopup,resetMarker,resetFieldAddress,initAds,filterAds,resetFilters};

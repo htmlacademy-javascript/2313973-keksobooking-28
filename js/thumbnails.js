@@ -1,3 +1,4 @@
+
 const adsCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 
 const mapHousingTypeToCaption = {

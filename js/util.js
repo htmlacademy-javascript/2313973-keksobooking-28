@@ -13,4 +13,3 @@ function debounce (callback, timeoutDelay) {
 
 export {isEscapeKey,debounce};
 
-
